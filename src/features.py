@@ -15,4 +15,4 @@ def normalize_landmarks(landmarks):
     
     points = points / scale
 
-    return points.flatten
+    return points.flatten()

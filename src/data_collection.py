@@ -4,6 +4,7 @@ from features import normalize_landmarks
 import csv
 import os
 
+# Initialize Tracker and Webcame
 tracker = HandTracker()
 webcam = cv2.VideoCapture(0)
 
@@ -11,9 +12,11 @@ if not webcam.isOpened():
     print("Error: Could not open webcam.")
     exit()
 
+# Make CSV File
 os.makedirs("../data", exist_ok=True)
 csv_path = "../data/letters.csv"
 
+# Write data to file
 if not os.path.exists(csv_path):
     with open(csv_path, "w", newline="") as f:
         writer = csv.writer(f)
@@ -29,19 +32,24 @@ print("Press a letter (A-Z) to set a label.")
 print("Press '3' to save a sample.")
 print("Press 'esc' to exit.")
 
+# Main Loop
+
 while True:
     ret, frame = webcam.read()
     if not ret:
         print("Failed to grab frame")
         break
 
+    # Mirroring Frame
     frame = cv2.flip(frame, 1)
 
     coords, landmarks = tracker.get_landmarks(frame)
 
+    # Drawing Landmarks
     if landmarks:
         tracker.draw(frame, landmarks)
 
+    # Text on window
     if current_label:
         cv2.putText(frame, f"Label: {current_label}", (20,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
 
@@ -53,10 +61,12 @@ while True:
 
     key = cv2.waitKey(1) & 0xFF
 
+    # Select which letter data is about to be collected on
     if ord("a") <= key <= ord("z"):
         current_label = chr(key).upper()
         print(f"Current label set to: {current_label}")
 
+    # save data to csv
     elif key == ord("3"):
         if coords is not None and current_label:
             features = normalize_landmarks(coords)
@@ -73,6 +83,7 @@ while True:
         else:
             print("Cannot save: No hand detected OR no label chosen.")
     
+    # exit on "esc"
     elif key == 27:
         print("Exiting data collection...")
         break

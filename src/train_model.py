@@ -7,7 +7,7 @@ from sklearn.metrics import accuracy_score, classification_report
 import joblib
 
 
-# Read from csv file
+# Read from csv file 
 
 csv_path = "../data/letters.csv"
 x = [] # feature vectors (list of lists)

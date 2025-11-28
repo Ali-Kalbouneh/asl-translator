@@ -1,143 +1,161 @@
 ✋ ASL Translator
-This is not meant to be a research-grade ASL interpreter or anything serious.
-It's simply a fun personal project where I experiment with computer vision, MediaPipe, and basic machine learning to recognize a few static ASL hand shapes.
 
-The goal is to learn, explore, and gradually improve — not to create a full ASL translation system.
+This project is not meant to be a serious ASL translation tool.
+It’s simply a personal project where I experiment with:
 
-For now, I have only trained the model on (A, B, C), and will train it further as time passes.
+MediaPipe (hand tracking)
 
-📁 Project Structure:
+OpenCV (webcam + visualization)
+
+Basic machine learning (RandomForest)
+
+The goal is to learn and explore — not to build a production-grade ASL interpreter.
+
+📁 Project Structure
 asl-translator/
 │
 ├── data/
-│   └── letters.csv             # All collected samples (A, B, C)
+│   └── letters.csv             # Collected samples (A, B, C)
 │
 ├── models/
 │   └── asl_letters_rf.pkl      # Trained RandomForest model
 │
 ├── src/
 │   ├── data_collection.py      # Script for collecting training data
-│   ├── train_model.py          # Trains the ML model
+│   ├── train_model.py          # Trains the machine learning model
 │   ├── interpreter.py          # Real-time ASL interpreter
-│   ├── hand_tracker.py         # Mediapipe hand detection wrapper
+│   ├── hand_tracker.py         # MediaPipe hand detection wrapper
 │   ├── features.py             # Normalization / feature extraction
-│   └── show_landmarks.py       # Debugging tool to visualize landmarks
+│   └── show_landmarks.py       # Debug landmark visualization tool
 │
 └── README.md
 
+⚙️ Installation
 
-⚙️ Setup & Installation:
-Clone the repo:
-git clone https://github.com/<Ali-Kalbouneh>/asl-translator.git
+Clone the repository:
+
+git clone https://github.com/<your-username>/asl-translator.git
 cd asl-translator
 
-Install Dependencies:
+
+Install dependencies:
+
 pip install opencv-python mediapipe numpy scikit-learn joblib
 
+🏗 Collecting Training Data (A, B, C)
 
-🏗 Collecting Training Data:
-
-Before training the model(if you want to), you need to collect examples of your hand forming 
-
-ASL letters.
+Before training the model, collect your own hand-shape samples.
 
 Run:
 
 python3 src/data_collection.py
 
-Controls:
+Controls
 
-Press A, B, or C → choose a letter to record
+A, B, or C → choose a letter
 
-Press 3 → save a sample of your hand
+3 → save a sample
 
-Press ESC → exit the tool
+ESC → exit
 
-All samples are stored in: data/letters.csv
+Samples are saved automatically to:
+
+data/letters.csv
 
 
-🎓 Training the Model:
+Tips for better data:
 
-After collecting enough data run:
+Collect 60–120 samples per letter
+
+Use slightly different hand positions
+
+Vary angles, lighting, and distance
+
+Keep your hand steady before saving each sample
+
+🎓 Training the Model
+
+After collecting enough samples:
 
 python3 src/train_model.py
 
-This will:
 
-Load your dataset
+This script will:
+
+Load the dataset
 
 Train a RandomForest classifier
 
-Print training and test accuracy
+Print accuracy and a classification report
 
-Save the trained model to: models/asl_letters_rf.pkl
+Save the trained model to:
 
+models/asl_letters_rf.pkl
+
+
+You only need to retrain when you add new samples.
 
 🤖 Running the Real-Time Interpreter
 
-Once the model is trained, run: 
+After training:
 
 python3 src/interpreter.py
 
-The interpreter:
 
-Opens your webcam
+The interpreter will:
 
-Detects your hand using MediaPipe
+Open your webcam
 
-Extracts normalized landmark features
+Detect hand landmarks using MediaPipe
 
-Predicts A/B/C in real time
+Normalize the coordinates
 
-Displays the predicted letter on-screen
+Predict A/B/C in real time
 
-Draws hand landmarks for debugging
+Display the prediction on the screen
 
-Uses smoothing to reduce flicker
+Draw the landmark skeleton
 
-Hold up the ASL letters and watch it attempt to classify them.
+Smooth predictions across frames
 
-
+Hold up one of the ASL letters and the model will attempt to classify it.
 
 🧪 Notes & Limitations
 
-This is just a fun experiment, not an actual ASL translation tool.
+This project is just for fun and has limitations:
 
-Current limitations:
+Recognizes only A, B, and C
 
-Only supports A, B, and C
+Sensitive to hand rotation and lighting
 
-Sensitive to hand rotation, lighting, and camera distance
+Sometimes flickers between predictions
 
-Occasional misclassifications
+No “rest hand” or “none” class yet
 
-No dynamic signs (J, Z)
+Not intended for real communication
 
-Not meant for real communication
-
-But it’s a great learning project for:
+Still, it’s a great way to learn:
 
 Computer vision
 
-Hand-tracking
+MediaPipe
 
-Feature engineering
+Feature extraction
 
 Machine learning
 
-Real-time interactive systems
-
+Real-time interactive apps
 
 🚧 Future Ideas
 
-Add a NONE / rest class
+Add a NONE / rest-hand class
 
-Expand dataset to full alphabet (A–Z)
+Collect samples for more letters (A–Z)
 
-Add dynamic gestures (J, Z)
+Recognize dynamic signs (J, Z)
 
-Use a deep learning model (CNN/MLP)
+Add word-level prediction
 
-Add sentence builder / UI overlay
+Implement a deep learning model
 
-Support two-hand signs
+Add UI elements or sentence-builder

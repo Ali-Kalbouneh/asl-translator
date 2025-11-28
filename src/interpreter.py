@@ -50,19 +50,20 @@ while True:
 
         # Confidence threshold
         # If model is not at least 70% confident → treat as "no sign"
-        if best_prob < 0.70:
-            prediction_buffer.append(None)
+        if best_letter == "NONE" or best_prob < 0.70:
+            prediction_buffer.append("NONE")
         else:
             prediction_buffer.append(best_letter)
 
         # Stable prediction (majority in last 5 frames) 
-        if prediction_buffer.count(best_letter) >= 3:  # appears 3+ times within buffer
-            smoothed_pred = best_letter
+        if prediction_buffer.count("NONE") >= 3:  # appears 3+ times within buffer
+            smoothed_pred = "NONE"
         else:
-            smoothed_pred = ""
+            non_none = [p for p in prediction_buffer if p != "NONE"]
+            smoothed_pred = max(set(non_none), key = non_none.count) if non_none else "NONE"
 
         # Display result
-        if smoothed_pred == "":
+        if smoothed_pred == "NONE":
             cv2.putText(frame, "Pred: ...", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 3)
         else:
             cv2.putText(frame, f"Pred: {smoothed_pred}", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)

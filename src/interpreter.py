@@ -6,7 +6,7 @@ from features import normalize_landmarks
 from collections import deque
 
 
-# Load Model & Initialize
+# Load Model & Initialize 
 
 model = joblib.load("../models/asl_letters_rf.pkl")
 tracker = HandTracker()

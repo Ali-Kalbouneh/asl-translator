@@ -126,9 +126,8 @@ The interpreter:
 
 This is just a fun experiment. Current limitations:
 
-- Only supports **A, B, C**  
-- Sensitive to hand rotation and lighting  
-- No “rest hand / none” class yet  
+- Only trained on **A, B, C**  
+- Sensitive to hand rotation and lighting    
 - Flickers occasionally  
 - Not meant for actual ASL communication  
 
@@ -143,8 +142,7 @@ Still, it’s a great way to learn:
 ---
 
 ## 🚧 Future Ideas
-
-- Add a **NONE** / rest-hand class  
+ 
 - Add more letters (A–Z)  
 - Recognize dynamic gestures (J, Z)  
 - Add a sentence builder  

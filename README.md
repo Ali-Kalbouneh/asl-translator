@@ -1,153 +1,160 @@
-# ✋ ASL Translator
+# ASL Translator
 
-This project is **not meant to be a serious ASL translation tool**.  
-It's simply a **personal project** where I experiment with:
+A real-time computer-vision application that recognizes American Sign Language letter gestures from webcam input using hand-landmark tracking and a machine-learning classification pipeline.
 
-- MediaPipe (hand tracking)  
-- OpenCV (webcam + visualization)  
-- Basic machine learning (RandomForest)  
+The project captures hand landmarks with **MediaPipe**, normalizes them into model features, trains a **Random Forest** classifier, and performs real-time inference through an **OpenCV** webcam interface.
 
-The goal is to learn and explore — not to build a production-grade ASL interpreter.
+## How It Works
 
----
-
-## 📁 Project Structure
-
+```text
+Webcam Frame
+     |
+     v
+MediaPipe Hand Detection
+     |
+     v
+21 Hand Landmarks
+     |
+     v
+Feature Extraction + Normalization
+     |
+     v
+Random Forest Classifier
+     |
+     v
+Prediction Smoothing
+     |
+     v
+Real-Time OpenCV Display
 ```
+
+## Features
+
+- Real-time webcam hand tracking
+- MediaPipe landmark extraction
+- Normalized landmark-based feature representation
+- Custom training-data collection workflow
+- Random Forest gesture classification
+- Prediction smoothing to reduce frame-to-frame flicker
+- On-screen hand skeleton and predicted letter
+
+## Tech Stack
+
+- Python
+- OpenCV
+- MediaPipe
+- scikit-learn
+- NumPy
+- joblib
+
+## Project Structure
+
+```text
 asl-translator/
-│
+|
 ├── data/
-│   └── letters.csv             # Collected samples (A, B, C)
-│
+│   └── letters.csv             # Collected training samples
+|
 ├── models/
-│   └── asl_letters_rf.pkl      # Trained RandomForest model
-│
+│   └── asl_letters_rf.pkl      # Trained Random Forest model
+|
 ├── src/
-│   ├── data_collection.py      # Collects training data
-│   ├── train_model.py          # Trains the model
-│   ├── interpreter.py          # Real-time ASL interpreter
-│   ├── hand_tracker.py         # MediaPipe hand detection wrapper
-│   ├── features.py             # Feature extraction + normalization
-│   └── show_landmarks.py       # Debugging utility
-│
+│   ├── data_collection.py      # Training-data collection
+│   ├── train_model.py          # Model training and evaluation
+│   ├── interpreter.py          # Real-time inference application
+│   ├── hand_tracker.py         # MediaPipe hand-detection wrapper
+│   ├── features.py             # Feature extraction and normalization
+│   └── show_landmarks.py       # Landmark visualization/debug utility
+|
 └── README.md
 ```
 
----
+## Installation
 
-## ⚙️ Installation
-
-Clone the repository:
+Clone the repository and install the dependencies:
 
 ```bash
-git clone https://github.com/<your-username>/asl-translator.git
+git clone https://github.com/Ali-Kalbouneh/asl-translator.git
 cd asl-translator
-```
-
-Install dependencies:
-
-```bash
 pip install opencv-python mediapipe numpy scikit-learn joblib
 ```
 
----
+## Collect Training Data
 
-## 🏗 Collecting Training Data (A, B, C)
-
-Run the data collection script:
+Run:
 
 ```bash
 python3 src/data_collection.py
 ```
 
-### Controls
+Controls:
 
-- **A**, **B**, **C** → select which letter to record  
-- **3** → save the current frame as a sample  
-- **ESC** → exit  
+- **A**, **B**, **C** select the letter being recorded
+- **3** saves the current hand sample
+- **ESC** exits
 
-Samples are saved to:
+Samples are written to:
 
-```
+```text
 data/letters.csv
 ```
 
-### Tips for best results
+For a more robust dataset, collect samples with variations in hand angle, distance, and lighting while keeping the complete hand visible.
 
-- Collect **60–120 samples per letter**  
-- Use small variations in angle, distance, lighting  
-- Keep your hand steady when saving  
-- Ensure your hand is fully inside the frame  
-
----
-
-## 🎓 Training the Model
-
-Once you have collected enough samples, train the model:
+## Train the Model
 
 ```bash
 python3 src/train_model.py
 ```
 
-This will:
+The training pipeline:
 
-- Load all data  
-- Train a RandomForest classifier  
-- Print accuracy and a classification report  
-- Save the trained model to:
+1. Loads the collected landmark dataset
+2. Builds the feature representation
+3. Trains a Random Forest classifier
+4. Reports model accuracy and classification metrics
+5. Serializes the trained model to `models/asl_letters_rf.pkl`
 
-```
-models/asl_letters_rf.pkl
-```
-
----
-
-## 🤖 Running the Real-Time Interpreter
-
-After training the model:
+## Run Real-Time Inference
 
 ```bash
 python3 src/interpreter.py
 ```
 
-The interpreter:
+The application opens the webcam, detects the user's hand, extracts normalized landmark features, predicts the gesture, smooths predictions across frames, and overlays the result on the video feed.
 
-- Opens your webcam  
-- Uses MediaPipe to detect hand landmarks  
-- Extracts normalized features  
-- Predicts A/B/C in real time  
-- Displays the prediction on screen  
-- Draws the hand skeleton  
-- Smooths predictions to reduce flicker  
+## Current Scope
 
----
+The current model recognizes the static letters **A, B, and C**. The project focuses on the complete computer-vision pipeline rather than serving as a production ASL translation system.
 
-## 🧪 Notes & Limitations
+Important limitations include:
 
-This is just a fun experiment. Current limitations:
+- Limited gesture vocabulary
+- Sensitivity to hand orientation and lighting
+- Training data collected from a limited set of examples
+- Dynamic gestures such as J and Z require temporal information rather than single-frame classification
+- Full ASL translation involves grammar, motion, facial expression, and context beyond isolated hand poses
 
-- Only trained on **A, B, C**  
-- Sensitive to hand rotation and lighting    
-- Flickers occasionally  
-- Not meant for actual ASL communication  
+## Engineering Decisions
 
-Still, it’s a great way to learn:
+### Landmark features instead of raw images
 
-- Computer vision basics  
-- MediaPipe landmark extraction  
-- Feature engineering  
-- Machine learning model training  
-- Real-time CV application design  
+Using MediaPipe landmarks reduces the input from full image pixels to structured hand geometry. This makes the classifier substantially smaller and allows experimentation without training a large image model.
 
----
+### Feature normalization
 
-## 🚧 Future Ideas
- 
-- Add more letters (A–Z)  
-- Recognize dynamic gestures (J, Z)  
-- Add a sentence builder  
-- Use a neural-network-based model  
-- Support two-hand signs  
+Normalizing landmark coordinates reduces sensitivity to where the hand appears in the camera frame and helps the model focus on relative hand shape.
 
----
+### Prediction smoothing
 
+Individual video frames can produce unstable predictions. Smoothing predictions across frames improves the stability of the displayed result during real-time use.
+
+## Future Improvements
+
+- Expand the dataset to the full static ASL alphabet
+- Add temporal gesture recognition for J and Z
+- Evaluate models across multiple users
+- Add confidence thresholds and an unknown-gesture state
+- Compare Random Forest performance with neural-network approaches
+- Add two-hand gesture support
+- Build sentence-level output from sequences of recognized signs
